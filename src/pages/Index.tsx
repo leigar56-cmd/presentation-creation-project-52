@@ -1,5 +1,6 @@
 import Icon from "@/components/ui/icon";
 import { useState } from "react";
+import { jsPDF } from "jspdf";
 
 const PHOTOS = [
   "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/27f78297-7bf6-4d99-ab16-22b37a00dce8.png",
@@ -65,7 +66,6 @@ export default function Index() {
   const handleDownloadPdf = async () => {
     setGenerating(true);
     try {
-      const { jsPDF } = await import("jspdf");
       const loadImage = (url: string): Promise<{ data: string; w: number; h: number } | null> =>
         new Promise((resolve) => {
           const img = new Image();
