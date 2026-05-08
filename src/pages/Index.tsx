@@ -104,15 +104,21 @@ export default function Index() {
       }
 
       // Cover: full-bleed photo with centered text overlay
-      const cover = `<section style="page-break-after:always;position:relative;width:100%;height:100vh;overflow:hidden;">
+      const cover = `<section style="page-break-after:always;position:relative;width:100%;height:100vh;overflow:hidden;font-family:'Montserrat',sans-serif;">
         <img src="${heroB64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.55) 100%);"></div>
-        <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px;letter-spacing:3px;font-size:14px;">
-          <p style="margin:0 0 18px;">КВАРТИРА НА ПРОДАЖУ</p>
-          <p style="margin:0 0 18px;">VICTORY PARK RESIDENCES</p>
-          <p style="margin:0;">МОСКВА · ПАРК ПОБЕДЫ</p>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,25,0.45) 0%,rgba(15,20,25,0.25) 45%,rgba(15,20,25,0.85) 100%);"></div>
+        <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px;">
+          <p style="margin:0 0 14px;letter-spacing:4px;font-size:11px;font-weight:600;color:#C9A961;text-transform:uppercase;">Эксклюзив</p>
+          <h1 style="margin:0 0 16px;font-size:38px;font-weight:700;letter-spacing:2px;text-transform:uppercase;line-height:1.2;">Квартира на продажу</h1>
+          <div style="width:60px;height:3px;background:#C9A961;margin:0 0 20px;"></div>
+          <p style="margin:0 0 10px;font-size:22px;font-weight:500;letter-spacing:3px;">VICTORY PARK RESIDENCES</p>
+          <p style="margin:0;font-size:13px;letter-spacing:3px;opacity:0.85;font-weight:400;">МОСКВА · ПАРК ПОБЕДЫ</p>
         </div>
       </section>`;
+
+      const ACCENT = "#C9A961";
+      const DARK = "#0F1419";
+      const TEXT = "#1A1A1A";
 
       // Two-column page: left text, right photo
       const twoCol = (
@@ -120,11 +126,11 @@ export default function Index() {
         body: string,
         imgUrl: string,
         priceLine?: string,
-      ) => `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
-        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
-          ${title ? `<h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;line-height:1.3;">${title}</h2>` : ""}
-          <div style="font-size:13px;line-height:1.7;color:#222;">${body}</div>
-          ${priceLine ? `<div style="margin-top:28px;padding-top:14px;border-top:1px solid #1A1A1A;font-size:14px;font-weight:500;">${priceLine}</div>` : ""}
+      ) => `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#FFFCF7;">
+        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:${TEXT};">
+          ${title ? `<h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;line-height:1.2;color:${DARK};letter-spacing:0.5px;">${title}</h2><div style="width:48px;height:3px;background:${ACCENT};margin:0 0 24px;"></div>` : ""}
+          <div style="font-size:13px;line-height:1.7;color:#2A2A2A;">${body}</div>
+          ${priceLine ? `<div style="margin-top:28px;padding:14px 18px;background:${ACCENT};color:#fff;font-size:15px;font-weight:600;display:inline-block;align-self:flex-start;border-radius:2px;">${priceLine}</div>` : ""}
         </div>
         <div style="flex:1;background:#000;">
           <img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" />
@@ -150,7 +156,7 @@ export default function Index() {
       const specsBody = specs
         .map(
           (s) =>
-            `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E5E5E0;font-size:13px;"><span style="color:#666;">${s.label}</span><span style="color:#1A1A1A;font-weight:500;">${s.value}</span></div>`,
+            `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #EFE6D2;font-size:13px;"><span style="color:#6B6B6B;text-transform:uppercase;letter-spacing:1px;font-size:11px;font-weight:500;">${s.label}</span><span style="color:${DARK};font-weight:600;font-size:14px;">${s.value}</span></div>`,
         )
         .join("");
 
@@ -184,43 +190,46 @@ export default function Index() {
           if (i % 2 === 0) {
             return twoCol("Локация и виды", body, url);
           }
-          return `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
+          return `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#FFFCF7;">
             <div style="flex:1;background:#000;"><img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
-            <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
-              <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;">Интерьер</h2>
-              <p style="margin:0;font-size:13px;line-height:1.7;color:#444;">${caption}</p>
+            <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:${TEXT};">
+              <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:0.5px;color:${DARK};">Интерьер</h2>
+              <div style="width:48px;height:3px;background:${ACCENT};margin:0 0 24px;"></div>
+              <p style="margin:0;font-size:13px;line-height:1.7;color:#2A2A2A;">${caption}</p>
             </div>
           </section>`;
         })
         .join("");
 
-      const contact = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
-        <div style="flex:1;padding:50px 40px;color:#1A1A1A;">
-          <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 32px;">Контакты</h2>
-          <p style="margin:0 0 8px;font-size:18px;font-weight:500;">Янина</p>
-          <p style="margin:0 0 32px;font-size:13px;color:#666;">Эксперт по элитной недвижимости</p>
-          <div style="font-size:14px;line-height:2;color:#222;">
-            <p style="margin:0;">Телефон: +7 (967) 119-88-13</p>
-            <p style="margin:0;">Почта: yanina.pro.invest@bk.ru</p>
-            <p style="margin:0;">Telegram: @Nelyubovna</p>
+      const contact = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:${DARK};color:#fff;">
+        <div style="flex:1;padding:60px 40px;display:flex;flex-direction:column;justify-content:center;">
+          <p style="margin:0 0 14px;letter-spacing:4px;font-size:11px;font-weight:600;color:${ACCENT};text-transform:uppercase;">Контакты</p>
+          <h2 style="font-family:'Montserrat',sans-serif;font-size:42px;font-weight:700;margin:0 0 8px;letter-spacing:1px;">Янина</h2>
+          <div style="width:48px;height:3px;background:${ACCENT};margin:0 0 16px;"></div>
+          <p style="margin:0 0 40px;font-size:13px;color:#B8B8B8;font-weight:400;">Эксперт по элитной недвижимости</p>
+          <div style="font-size:14px;line-height:2.2;color:#E8E8E8;font-weight:400;">
+            <p style="margin:0;">Телефон: <span style="color:#fff;font-weight:600;">+7 (967) 119-88-13</span></p>
+            <p style="margin:0;">Почта: <span style="color:#fff;font-weight:600;">yanina.pro.invest@bk.ru</span></p>
+            <p style="margin:0;">Telegram: <span style="color:${ACCENT};font-weight:600;">@Nelyubovna</span></p>
           </div>
         </div>
         <div style="flex:1;background:#000;"><img src="${photosB64[0]}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
       </section>`;
 
+      // Order: cover -> about -> SPECS (slide 3) -> description -> gallery -> contact
       const photoSlides = galleryPages;
-      const about_combined = about + description;
-      const specsBlock = specsPage;
+      const about_combined = about + specsPage + description;
+      const specsBlock = "";
 
       const html = `<!DOCTYPE html>
 <html lang="ru"><head>
 <meta charset="UTF-8"/>
 <title>Victory Park Residences</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Golos+Text:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;font-family:'Golos Text',-apple-system,sans-serif;}
+  html,body{margin:0;padding:0;font-family:'Montserrat',-apple-system,sans-serif;}
   @page{size:A4 portrait;margin:0;}
   @media print{
     section{width:100%;height:100vh;page-break-after:always;}
