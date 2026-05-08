@@ -373,16 +373,16 @@ export default function Index() {
               </div>
               <div>
                 <p className="text-xl font-light" style={{ fontFamily: "'Cormorant', serif" }}>
-                  Анна Соколова
+                  Янина
                 </p>
-                <p className="text-sm text-stone-400">Старший брокер · 12 лет опыта</p>
+                <p className="text-sm text-stone-400">Эксперт по элитной недвижимости</p>
               </div>
             </div>
             <div className="space-y-4">
               {[
-                { icon: "Phone", label: "+7 (925) 000-00-00" },
-                { icon: "Mail", label: "anna@realty.ru" },
-                { icon: "MessageCircle", label: "Telegram: @anna_sokolova" },
+                { icon: "Phone", label: "+7 (967) 119-88-13" },
+                { icon: "Mail", label: "yanina.pro.invest@bk.ru" },
+                { icon: "MessageCircle", label: "Telegram: @Nelyubovna" },
               ].map((c) => (
                 <div key={c.label} className="flex items-center gap-3">
                   <Icon name={c.icon} size={16} className="text-stone-400" />
@@ -412,6 +412,71 @@ export default function Index() {
                 Написать
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* EXTRA PHOTOS — каждое отдельно */}
+      <section className="bg-stone-100 py-20">
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
+          <p className="text-xs tracking-[0.25em] uppercase text-stone-400 mb-5">
+            Дополнительные фото
+          </p>
+          <h2
+            className="text-3xl md:text-4xl mb-12 font-light"
+            style={{ fontFamily: "'Cormorant', serif" }}
+          >
+            Виды и интерьер
+          </h2>
+
+          <div className="space-y-12">
+            {[
+              {
+                src: "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/4547b25b-e005-40bc-9b2d-9ac26ed3286a.png",
+                title: "Памятник героям Первой мировой войны",
+                desc: "Вид рядом с жилым комплексом",
+              },
+              {
+                src: "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/fb81af11-edae-428c-af78-e006195d9cd7.png",
+                title: "Панорамное окно с видом на Храм Георгия Победоносца",
+                desc: "Вид из квартиры на Парк Победы",
+              },
+              {
+                src: "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/1ae1bb6e-ce89-4634-b606-0253ce943144.png",
+                title: "Кухня-гостиная 60 м²",
+                desc: "Просторная зона с панорамным остеклением",
+              },
+              {
+                src: "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/d79c305f-331f-472f-a39a-4ba1950b60a9.png",
+                title: "Мастер-спальня",
+                desc: "Светлая комната с панорамным окном",
+              },
+              {
+                src: "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/e618b959-05fc-4b46-a5c8-fdd4796ff45a.png",
+                title: "Ванная комната",
+                desc: "Натуральный мрамор, отдельностоящая ванна, две раковины",
+              },
+            ].map((p, i) => (
+              <figure key={p.src} className="bg-white">
+                <div className="overflow-hidden" style={{ aspectRatio: "16/10" }}>
+                  <img src={p.src} alt={p.title} className="w-full h-full object-cover" />
+                </div>
+                <figcaption className="p-6 md:p-8 flex justify-between items-end gap-4 flex-wrap">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-stone-400 mb-2">
+                      Фото {String(i + 1).padStart(2, "0")}
+                    </p>
+                    <p
+                      className="text-2xl font-light"
+                      style={{ fontFamily: "'Cormorant', serif" }}
+                    >
+                      {p.title}
+                    </p>
+                  </div>
+                  <p className="text-sm text-stone-500">{p.desc}</p>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       </section>
