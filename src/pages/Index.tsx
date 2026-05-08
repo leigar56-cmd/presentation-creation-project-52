@@ -60,10 +60,37 @@ const rooms: { name: string; size: string; x: number; y: number; w: number; h: n
 export default function Index() {
   const [active, setActive] = useState(0);
 
+  const handleDownloadPdf = () => {
+    window.print();
+  };
+
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900">
+      {/* PRINT STYLES */}
+      <style>{`
+        @media print {
+          @page { size: A4; margin: 12mm; }
+          html, body { background: #fff !important; }
+          .no-print { display: none !important; }
+          section { page-break-inside: avoid; padding-top: 16px !important; padding-bottom: 16px !important; }
+          .print-hero { height: 480px !important; min-height: 480px !important; }
+          iframe { display: none !important; }
+          h1, h2 { color: #111 !important; }
+          img { max-width: 100% !important; }
+        }
+      `}</style>
+
+      {/* FLOATING DOWNLOAD BUTTON */}
+      <button
+        onClick={handleDownloadPdf}
+        className="no-print fixed bottom-6 right-6 z-50 bg-stone-900 text-white px-6 py-4 shadow-2xl hover:bg-stone-800 transition-colors flex items-center gap-3 group"
+      >
+        <Icon name="Download" size={18} />
+        <span className="text-xs tracking-widest uppercase">Скачать PDF</span>
+      </button>
+
       {/* HERO */}
-      <section className="relative h-[92vh] min-h-[600px] overflow-hidden">
+      <section className="print-hero relative h-[92vh] min-h-[600px] overflow-hidden">
         <img
           src={HERO}
           alt="Victory Park Residences"
