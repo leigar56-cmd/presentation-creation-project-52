@@ -103,114 +103,65 @@ export default function Index() {
         return;
       }
 
-      // Cover: full-bleed photo with centered text overlay
-      const cover = `<section style="page-break-after:always;position:relative;width:100%;height:100vh;overflow:hidden;">
-        <img src="${heroB64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.55) 100%);"></div>
-        <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px;letter-spacing:3px;font-size:14px;">
-          <p style="margin:0 0 18px;">КВАРТИРА НА ПРОДАЖУ</p>
-          <p style="margin:0 0 18px;">VICTORY PARK RESIDENCES</p>
-          <p style="margin:0;">МОСКВА · ПАРК ПОБЕДЫ</p>
-        </div>
-      </section>`;
+      const slideHtml = (inner: string, bg = "#FAFAF8") =>
+        `<section style="page-break-after:always;width:100%;height:100vh;background:${bg};display:flex;flex-direction:column;justify-content:center;padding:60px;box-sizing:border-box;">${inner}</section>`;
 
-      // Two-column page: left text, right photo
-      const twoCol = (
-        title: string,
-        body: string,
-        imgUrl: string,
-        priceLine?: string,
-      ) => `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
-        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
-          ${title ? `<h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;line-height:1.3;">${title}</h2>` : ""}
-          <div style="font-size:13px;line-height:1.7;color:#222;">${body}</div>
-          ${priceLine ? `<div style="margin-top:28px;padding-top:14px;border-top:1px solid #1A1A1A;font-size:14px;font-weight:500;">${priceLine}</div>` : ""}
-        </div>
-        <div style="flex:1;background:#000;">
-          <img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" />
-        </div>
-      </section>`;
+      const cover = slideHtml(
+        `<div style="position:absolute;inset:0;background:url('${heroB64}') center/cover;"></div>
+         <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3),rgba(0,0,0,0.85));"></div>
+         <div style="position:relative;color:#fff;">
+           <p style="letter-spacing:6px;font-size:14px;opacity:0.7;margin-bottom:300px;">VICTORY PARK RESIDENCES · КОРПУС 2</p>
+           <h1 style="font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:300;margin:0 0 24px;">4-комнатная квартира</h1>
+           <p style="font-family:'Cormorant Garamond',serif;font-size:32px;opacity:0.85;margin:0 0 16px;">179,08 м² · 10/14 этаж · Стиль Неодеко</p>
+           <p style="font-size:14px;letter-spacing:3px;opacity:0.6;margin:0;">МОСКВА · НАПРОТИВ ПАРКА ПОБЕДЫ</p>
+         </div>`,
+        "#1A1A1A",
+      );
 
-      const aboutBody = `
-        <p style="margin:0 0 14px;">Квартира с двумя спальнями и просторной гостиной.</p>
-        <p style="margin:0 0 14px;">Ремонт выполнен в 2025 году.</p>
-        <p style="margin:0 0 14px;">Общая площадь ${specs[0].value}. ${specs[3].value} этаж.</p>
-        <p style="margin:0 0 8px;">Предлагается с мебелью, декором и оборудованием</p>
-        <p style="margin:0 0 6px;">— панорамные окна</p>
-        <p style="margin:0 0 6px;">— высота потолка 3.0 м</p>
-        <p style="margin:0;">— вентиляция, кондиционирование, "умный дом"</p>
-      `;
+      const about = slideHtml(
+        `<p style="letter-spacing:5px;font-size:11px;color:#8B8B7A;margin:0 0 24px;">ОБ ОБЪЕКТЕ</p>
+         <h2 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:#1A1A1A;margin:0 0 32px;max-width:900px;">Редкий видовой лот в одном из самых престижных комплексов Москвы</h2>
+         <p style="font-size:16px;line-height:1.7;color:#555;max-width:900px;margin:0 0 16px;">Уникальная 4-комнатная квартира 180 м² на 10 этаже корпуса 2 Victory Park Residences с панорамным видом на Парк Победы и центр Москвы. Лучшее расположение по видовому потенциалу — Музей Победы, Храм Георгия Победоносца, Триумфальные ворота, Москва-Сити.</p>
+         <p style="font-size:16px;line-height:1.7;color:#555;max-width:900px;margin:0 0 16px;">Дом сдан, акт приёма-передачи подписан, в квартире никто не проживал. Премиальная дизайнерская отделка от застройщика в стиле Неодеко.</p>
+         <p style="font-size:16px;line-height:1.7;color:#555;max-width:900px;margin:0;">Планировка: просторная кухня-гостиная 60 м², три мастер-спальни с собственными санузлами и гардеробными.</p>`,
+      );
 
-      const descriptionBody = `
-        <p style="margin:0 0 12px;">Просторная 4-комнатная квартира общей площадью ${specs[0].value} в клубном доме Victory Park Residences. Выполнена премиальная дизайнерская отделка в стиле Неодеко, светлые тона, высокие потолки, панорамное остекление, большое количество естественного света.</p>
-        <p style="margin:0 0 12px;">Спланирована большая гостиная с зоной отдыха и обеденной зоной. Кухня с островом и встроенной техникой премиум-класса. В холле организована зона библиотеки. Окна выходят на Парк Победы.</p>
-        <p style="margin:0;">Мастер-спальня со своей ванной комнатой, отдельной ванной, душем и двумя раковинами. Установлена акустическая система. Санузел отделан натуральным мрамором, итальянская сантехника. Прихожая с вместительной гардеробной. В паркинге 2 машиноместа.</p>
-      `;
+      const specsBlock = slideHtml(
+        `<p style="letter-spacing:5px;font-size:11px;color:#8B8B7A;margin:0 0 24px;">ПАРАМЕТРЫ</p>
+         <h2 style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:300;color:#1A1A1A;margin:0 0 40px;">Технические характеристики</h2>
+         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#DDD;">
+           ${specs
+             .map(
+               (s) => `<div style="background:#F2F1EC;padding:24px;">
+             <p style="font-size:10px;letter-spacing:3px;color:#999;margin:0 0 8px;text-transform:uppercase;">${s.label}</p>
+             <p style="font-family:'Cormorant Garamond',serif;font-size:26px;color:#1A1A1A;margin:0;">${s.value}</p>
+           </div>`,
+             )
+             .join("")}
+         </div>`,
+        "#F2F1EC",
+      );
 
-      const specsBody = specs
+      const photoSlides = photosB64
         .map(
-          (s) =>
-            `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E5E5E0;font-size:13px;"><span style="color:#666;">${s.label}</span><span style="color:#1A1A1A;font-weight:500;">${s.value}</span></div>`,
+          (url, i) => `<section style="page-break-after:always;width:100%;height:100vh;background:#1A1A1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;box-sizing:border-box;">
+          <img src="${url}" style="max-width:100%;max-height:88%;object-fit:contain;" />
+          <p style="color:#fff;font-size:14px;letter-spacing:3px;margin-top:20px;text-align:center;">${photoCaptions[i] || ""}</p>
+        </section>`,
         )
         .join("");
 
-      const about = twoCol(
-        "квартира с 4-мя комнатами",
-        aboutBody,
-        photosB64[6] || photosB64[1],
-        "Стоимость по запросу",
+      const contact = slideHtml(
+        `<p style="letter-spacing:5px;font-size:11px;color:#8B8B7A;margin:0 0 24px;">КОНТАКТЫ</p>
+         <h2 style="font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:#fff;margin:0 0 12px;">Янина</h2>
+         <p style="font-size:16px;color:#aaa;margin:0 0 60px;">Эксперт по элитной недвижимости</p>
+         <div style="display:flex;flex-direction:column;gap:18px;color:#fff;font-size:20px;">
+           <p style="margin:0;">Телефон: +7 (967) 119-88-13</p>
+           <p style="margin:0;">Почта: yanina.pro.invest@bk.ru</p>
+           <p style="margin:0;">Telegram: @Nelyubovna</p>
+         </div>`,
+        "#1A1A1A",
       );
-
-      const description = twoCol(
-        "О квартире",
-        descriptionBody,
-        photosB64[7] || photosB64[3],
-      );
-
-      const specsPage = twoCol(
-        "Технические характеристики",
-        specsBody,
-        photosB64[8] || photosB64[4],
-      );
-
-      // Remaining photos as text+photo pages with captions
-      const remainingPhotos = photosB64.slice(1).filter((_, idx) => ![5, 6, 7].includes(idx));
-      const galleryPages = remainingPhotos
-        .map((url, i) => {
-          const realIdx = photosB64.indexOf(url);
-          const caption = photoCaptions[realIdx] || "";
-          const body = `<p style="margin:0;color:#444;">${caption}</p>`;
-          // alternate: even = photo right, odd = photo left
-          if (i % 2 === 0) {
-            return twoCol("Локация и виды", body, url);
-          }
-          return `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
-            <div style="flex:1;background:#000;"><img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
-            <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
-              <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;">Интерьер</h2>
-              <p style="margin:0;font-size:13px;line-height:1.7;color:#444;">${caption}</p>
-            </div>
-          </section>`;
-        })
-        .join("");
-
-      const contact = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
-        <div style="flex:1;padding:50px 40px;color:#1A1A1A;">
-          <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 32px;">Контакты</h2>
-          <p style="margin:0 0 8px;font-size:18px;font-weight:500;">Янина</p>
-          <p style="margin:0 0 32px;font-size:13px;color:#666;">Эксперт по элитной недвижимости</p>
-          <div style="font-size:14px;line-height:2;color:#222;">
-            <p style="margin:0;">Телефон: +7 (967) 119-88-13</p>
-            <p style="margin:0;">Почта: yanina.pro.invest@bk.ru</p>
-            <p style="margin:0;">Telegram: @Nelyubovna</p>
-          </div>
-        </div>
-        <div style="flex:1;background:#000;"><img src="${photosB64[0]}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
-      </section>`;
-
-      const photoSlides = galleryPages;
-      const about_combined = about + description;
-      const specsBlock = specsPage;
 
       const html = `<!DOCTYPE html>
 <html lang="ru"><head>
@@ -221,15 +172,14 @@ export default function Index() {
 <style>
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;font-family:'Golos Text',-apple-system,sans-serif;}
-  @page{size:A4 portrait;margin:0;}
+  @page{size:A4 landscape;margin:0;}
   @media print{
     section{width:100%;height:100vh;page-break-after:always;}
     body{margin:0;}
-    img{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   }
 </style>
 </head><body>
-${cover}${about_combined}${specsBlock}${photoSlides}${contact}
+${cover}${about}${specsBlock}${photoSlides}${contact}
 <script>
   function startPrint(){
     var imgs = document.images;
