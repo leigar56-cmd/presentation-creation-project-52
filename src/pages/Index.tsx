@@ -1,6 +1,42 @@
 import Icon from "@/components/ui/icon";
 import { useState } from "react";
-import { jsPDF } from "jspdf";
+
+declare global {
+  interface Window {
+    jspdf?: { jsPDF: new (opts?: object) => JsPDFInstance };
+  }
+}
+
+interface JsPDFGState {
+  opacity: number;
+}
+interface JsPDFInstance {
+  GState: (opts: JsPDFGState) => JsPDFGState;
+  setGState: (s: JsPDFGState) => void;
+  addPage: () => void;
+  setFillColor: (r: number, g: number, b: number) => void;
+  setDrawColor: (r: number, g: number, b: number) => void;
+  setTextColor: (r: number, g: number, b: number) => void;
+  rect: (x: number, y: number, w: number, h: number, style?: string) => void;
+  setFont: (name: string, style?: string) => void;
+  setFontSize: (size: number) => void;
+  text: (text: string | string[], x: number, y: number, opts?: object) => void;
+  splitTextToSize: (text: string, w: number) => string[];
+  addImage: (data: string, fmt: string, x: number, y: number, w: number, h: number) => void;
+  addFileToVFS: (name: string, data: string) => void;
+  addFont: (file: string, name: string, style: string) => void;
+  save: (filename: string) => void;
+}
+
+const loadJsPdfFromCdn = (): Promise<typeof window.jspdf> =>
+  new Promise((resolve, reject) => {
+    if (window.jspdf) return resolve(window.jspdf);
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+    s.onload = () => resolve(window.jspdf);
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
 
 const PHOTOS = [
   "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/27f78297-7bf6-4d99-ab16-22b37a00dce8.png",
@@ -66,6 +102,9 @@ export default function Index() {
   const handleDownloadPdf = async () => {
     setGenerating(true);
     try {
+      const lib = await loadJsPdfFromCdn();
+      if (!lib) throw new Error("Не удалось загрузить jsPDF");
+      const { jsPDF } = lib;
       const loadImage = (url: string): Promise<{ data: string; w: number; h: number } | null> =>
         new Promise((resolve) => {
           const img = new Image();
