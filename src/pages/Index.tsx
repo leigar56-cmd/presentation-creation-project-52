@@ -88,6 +88,21 @@ export default function Index() {
           img.src = url;
         });
 
+      const fetchFontBase64 = async (url: string): Promise<string | null> => {
+        try {
+          const res = await fetch(url);
+          const buf = await res.arrayBuffer();
+          let binary = "";
+          const bytes = new Uint8Array(buf);
+          for (let i = 0; i < bytes.byteLength; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          return btoa(binary);
+        } catch {
+          return null;
+        }
+      };
+
       const ALL_PHOTOS = [
         ...PHOTOS,
         "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/4547b25b-e005-40bc-9b2d-9ac26ed3286a.png",
@@ -109,11 +124,29 @@ export default function Index() {
         "Ванная комната",
       ];
 
-      const images = await Promise.all(ALL_PHOTOS.map(loadImage));
+      const [images, fontRegular, fontBold] = await Promise.all([
+        Promise.all(ALL_PHOTOS.map(loadImage)),
+        fetchFontBase64(
+          "https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.ttf",
+        ),
+        fetchFontBase64(
+          "https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.ttf",
+        ),
+      ]);
 
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const PW = 297;
       const PH = 210;
+
+      let FONT = "helvetica";
+      if (fontRegular && fontBold) {
+        pdf.addFileToVFS("Roboto-Regular.ttf", fontRegular);
+        pdf.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+        pdf.addFileToVFS("Roboto-Bold.ttf", fontBold);
+        pdf.addFont("Roboto-Bold.ttf", "Roboto", "bold");
+        FONT = "Roboto";
+      }
+      pdf.setFont(FONT, "normal");
 
       // Page 1 — Cover
       const cover = images[0];
@@ -133,15 +166,17 @@ export default function Index() {
       pdf.setGState(pdf.GState({ opacity: 1 }));
 
       pdf.setTextColor(255, 255, 255);
-      pdf.setFont("helvetica", "normal");
+      pdf.setFont(FONT, "normal");
       pdf.setFontSize(10);
-      pdf.text("VICTORY PARK RESIDENCES", 18, 22);
+      pdf.text("VICTORY PARK RESIDENCES · КОРПУС 2", 18, 22);
+      pdf.setFont(FONT, "bold");
       pdf.setFontSize(36);
-      pdf.text("4-komnatnaya kvartira", 18, 130);
+      pdf.text("4-комнатная квартира", 18, 130);
+      pdf.setFont(FONT, "normal");
       pdf.setFontSize(18);
-      pdf.text("179,08 m2  ·  10/14 etazh  ·  Neodeko", 18, 145);
+      pdf.text("179,08 м²  ·  10/14 этаж  ·  Стиль Неодеко", 18, 145);
       pdf.setFontSize(11);
-      pdf.text("Moskva · naprotiv Parka Pobedy", 18, 160);
+      pdf.text("Москва · напротив Парка Победы", 18, 160);
 
       // Page 2 — About
       pdf.addPage();
@@ -149,19 +184,21 @@ export default function Index() {
       pdf.rect(0, 0, PW, PH, "F");
       pdf.setTextColor(139, 139, 122);
       pdf.setFontSize(9);
-      pdf.text("OB OBEKTE", 18, 22);
+      pdf.text("ОБ ОБЪЕКТЕ", 18, 22);
       pdf.setTextColor(26, 26, 26);
+      pdf.setFont(FONT, "bold");
       pdf.setFontSize(22);
       const title = pdf.splitTextToSize(
-        "Redkiy vidovoi lot v odnom iz samykh prestizhnykh kompleksov Moskvy",
+        "Редкий видовой лот в одном из самых престижных комплексов Москвы",
         PW - 36,
       );
       pdf.text(title, 18, 36);
 
+      pdf.setFont(FONT, "normal");
       pdf.setTextColor(85, 85, 85);
       pdf.setFontSize(12);
       const aboutTxt = pdf.splitTextToSize(
-        "Unikalnaya 4-komnatnaya kvartira 180 m2 na 10 etazhe korpusa 2 Victory Park Residences s panoramnym vidom na Park Pobedy i tsentr Moskvy. Luchshee raspolozhenie po vidovomu potentsialu — Muzei i Monument Pobedy, Khram Georgiya Pobedonostsa, Triumfalnye vorota, Moskva-Siti.\n\nDom sdan, akt priema-peredachi podpisan, v kvartire nikto ne prozhival. Premialnaya dizainerskaya otdelka ot zastroyshchika v stile Neodeko: naturalnye materialy, sovremennye inzhenernye resheniya, panoramnye okna.\n\nPlanirovka: prostornaya kukhnya-gostinaya 60 m2, tri master-spalni s sobstvennymi sanuzlami i garderobnymi.",
+        "Уникальная 4-комнатная квартира 180 м² на 10 этаже корпуса 2 Victory Park Residences с панорамным видом на Парк Победы и центр Москвы. Лучшее расположение по видовому потенциалу — Музей и Монумент Победы, Храм Георгия Победоносца, Триумфальные ворота, Москва-Сити.\n\nДом сдан, акт приёма-передачи подписан, в квартире никто не проживал. Премиальная дизайнерская отделка от застройщика в стиле Неодеко: натуральные материалы, современные инженерные решения, панорамные окна.\n\nПланировка: просторная кухня-гостиная 60 м², три мастер-спальни с собственными санузлами и гардеробными.",
         PW - 36,
       );
       pdf.text(aboutTxt, 18, 70);
@@ -172,35 +209,28 @@ export default function Index() {
       pdf.rect(0, 0, PW, PH, "F");
       pdf.setTextColor(139, 139, 122);
       pdf.setFontSize(9);
-      pdf.text("PARAMETRY", 18, 22);
+      pdf.text("ПАРАМЕТРЫ", 18, 22);
       pdf.setTextColor(26, 26, 26);
+      pdf.setFont(FONT, "bold");
       pdf.setFontSize(22);
-      pdf.text("Tekhnicheskie kharakteristiki", 18, 36);
+      pdf.text("Технические характеристики", 18, 36);
 
-      const specsTr: { label: string; value: string }[] = [
-        { label: "PLOSCHAD", value: "179,08 m2" },
-        { label: "ZHILAYA", value: "90 m2" },
-        { label: "KUKHNYA-GOSTINAYA", value: "60 m2" },
-        { label: "ETAZH", value: "10 iz 14" },
-        { label: "KOMNAT", value: "4" },
-        { label: "SANUZLY", value: "3 (v kazhdoi spalne)" },
-        { label: "TIP SDELKI", value: "Svobodnaya prodazha" },
-        { label: "STIL REMONTA", value: "Neodeko" },
-      ];
       const cw = (PW - 36) / 4;
       const ch = 32;
-      specsTr.forEach((s, i) => {
+      specs.forEach((s, i) => {
         const cx = 18 + (i % 4) * cw;
         const cy = 50 + Math.floor(i / 4) * ch;
         pdf.setFillColor(255, 255, 255);
         pdf.rect(cx, cy, cw - 4, ch - 4, "F");
         pdf.setDrawColor(224, 224, 216);
         pdf.rect(cx, cy, cw - 4, ch - 4, "S");
+        pdf.setFont(FONT, "normal");
         pdf.setTextColor(153, 153, 153);
         pdf.setFontSize(8);
-        pdf.text(s.label, cx + 4, cy + 8);
+        pdf.text(s.label.toUpperCase(), cx + 4, cy + 8);
+        pdf.setFont(FONT, "bold");
         pdf.setTextColor(26, 26, 26);
-        pdf.setFontSize(16);
+        pdf.setFontSize(15);
         pdf.text(s.value, cx + 4, cy + 20);
       });
 
@@ -224,34 +254,38 @@ export default function Index() {
         const dy = (PH - dh) / 2 - 5;
         pdf.addImage(img.data, "JPEG", dx, dy, dw, dh);
 
+        pdf.setFont(FONT, "normal");
         pdf.setTextColor(255, 255, 255);
         pdf.setFontSize(11);
-        pdf.text(photoTitles[i] || `Foto ${i + 1}`, PW / 2, PH - 8, { align: "center" });
+        pdf.text(photoTitles[i] || `Фото ${i + 1}`, PW / 2, PH - 8, { align: "center" });
       });
 
       // Contact page
       pdf.addPage();
       pdf.setFillColor(26, 26, 26);
       pdf.rect(0, 0, PW, PH, "F");
+      pdf.setFont(FONT, "normal");
       pdf.setTextColor(139, 139, 122);
       pdf.setFontSize(9);
-      pdf.text("KONTAKTY", 18, 22);
+      pdf.text("КОНТАКТЫ", 18, 22);
       pdf.setTextColor(255, 255, 255);
+      pdf.setFont(FONT, "bold");
       pdf.setFontSize(40);
-      pdf.text("Yanina", 18, 60);
+      pdf.text("Янина", 18, 60);
+      pdf.setFont(FONT, "normal");
       pdf.setFontSize(13);
       pdf.setTextColor(170, 170, 170);
-      pdf.text("Ekspert po elitnoi nedvizhimosti", 18, 72);
+      pdf.text("Эксперт по элитной недвижимости", 18, 72);
 
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(14);
-      pdf.text("Telefon:    +7 (967) 119-88-13", 18, 100);
-      pdf.text("Pochta:     yanina.pro.invest@bk.ru", 18, 112);
-      pdf.text("Telegram:  @Nelyubovna", 18, 124);
+      pdf.text("Телефон:    +7 (967) 119-88-13", 18, 100);
+      pdf.text("Почта:        yanina.pro.invest@bk.ru", 18, 112);
+      pdf.text("Telegram:   @Nelyubovna", 18, 124);
 
       pdf.setTextColor(119, 119, 119);
       pdf.setFontSize(9);
-      pdf.text("Victory Park Residences · Korpus 2 · Moskva", 18, PH - 12);
+      pdf.text("Victory Park Residences · Корпус 2 · Москва", 18, PH - 12);
 
       pdf.save("Victory-Park-Residences.pdf");
     } finally {
