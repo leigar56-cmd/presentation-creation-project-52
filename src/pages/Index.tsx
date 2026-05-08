@@ -40,7 +40,6 @@ type Slide =
   | { kind: "cover" }
   | { kind: "about" }
   | { kind: "specs" }
-  | { kind: "plan" }
   | { kind: "photo"; index: number }
   | { kind: "location" }
   | { kind: "contact" };
@@ -49,7 +48,6 @@ const slides: Slide[] = [
   { kind: "cover" },
   { kind: "about" },
   { kind: "specs" },
-  { kind: "plan" },
   ...PHOTOS.map((_, i) => ({ kind: "photo" as const, index: i })),
   { kind: "location" },
   { kind: "contact" },
@@ -96,10 +94,8 @@ export default function Index() {
           img.src = url;
         });
 
-      const PLAN_URL = "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/files/2126649d-223c-47c6-a6a5-cf01c7e7710b.jpg";
       const photosB64 = await Promise.all(PHOTOS.map(toBase64));
       const heroB64 = photosB64[0];
-      const planB64 = await toBase64(PLAN_URL);
 
       const win = window.open("", "_blank");
       if (!win) {
@@ -108,21 +104,15 @@ export default function Index() {
       }
 
       // Cover: full-bleed photo with centered text overlay
-      const cover = `<section style="page-break-after:always;position:relative;width:100%;height:100vh;overflow:hidden;font-family:'Montserrat',sans-serif;">
+      const cover = `<section style="page-break-after:always;position:relative;width:100%;height:100vh;overflow:hidden;">
         <img src="${heroB64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
-        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,25,0.45) 0%,rgba(15,20,25,0.25) 45%,rgba(15,20,25,0.85) 100%);"></div>
-        <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px;">
-          <p style="margin:0 0 14px;letter-spacing:4px;font-size:11px;font-weight:600;color:#C9A961;text-transform:uppercase;">Эксклюзив</p>
-          <h1 style="margin:0 0 16px;font-size:38px;font-weight:700;letter-spacing:2px;text-transform:uppercase;line-height:1.2;">Квартира на продажу</h1>
-          <div style="width:60px;height:3px;background:#C9A961;margin:0 0 20px;"></div>
-          <p style="margin:0 0 10px;font-size:22px;font-weight:500;letter-spacing:3px;">VICTORY PARK RESIDENCES</p>
-          <p style="margin:0;font-size:13px;letter-spacing:3px;opacity:0.85;font-weight:400;">МОСКВА · ПАРК ПОБЕДЫ</p>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.25) 0%,rgba(0,0,0,0.15) 40%,rgba(0,0,0,0.55) 100%);"></div>
+        <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:40px;letter-spacing:3px;font-size:14px;">
+          <p style="margin:0 0 18px;">КВАРТИРА НА ПРОДАЖУ</p>
+          <p style="margin:0 0 18px;">VICTORY PARK RESIDENCES</p>
+          <p style="margin:0;">МОСКВА · ПАРК ПОБЕДЫ</p>
         </div>
       </section>`;
-
-      const ACCENT = "#C9A961";
-      const DARK = "#0F1419";
-      const TEXT = "#1A1A1A";
 
       // Two-column page: left text, right photo
       const twoCol = (
@@ -130,11 +120,11 @@ export default function Index() {
         body: string,
         imgUrl: string,
         priceLine?: string,
-      ) => `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#FFFCF7;">
-        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:${TEXT};">
-          ${title ? `<h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;line-height:1.2;color:${DARK};letter-spacing:0.5px;">${title}</h2><div style="width:48px;height:3px;background:${ACCENT};margin:0 0 24px;"></div>` : ""}
-          <div style="font-size:13px;line-height:1.7;color:#2A2A2A;">${body}</div>
-          ${priceLine ? `<div style="margin-top:28px;padding:14px 18px;background:${ACCENT};color:#fff;font-size:15px;font-weight:600;display:inline-block;align-self:flex-start;border-radius:2px;">${priceLine}</div>` : ""}
+      ) => `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
+        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
+          ${title ? `<h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;line-height:1.3;">${title}</h2>` : ""}
+          <div style="font-size:13px;line-height:1.7;color:#222;">${body}</div>
+          ${priceLine ? `<div style="margin-top:28px;padding-top:14px;border-top:1px solid #1A1A1A;font-size:14px;font-weight:500;">${priceLine}</div>` : ""}
         </div>
         <div style="flex:1;background:#000;">
           <img src="${imgUrl}" style="width:100%;height:100%;object-fit:cover;display:block;" />
@@ -160,7 +150,7 @@ export default function Index() {
       const specsBody = specs
         .map(
           (s) =>
-            `<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #EFE6D2;font-size:13px;"><span style="color:#6B6B6B;text-transform:uppercase;letter-spacing:1px;font-size:11px;font-weight:500;">${s.label}</span><span style="color:${DARK};font-weight:600;font-size:14px;">${s.value}</span></div>`,
+            `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #E5E5E0;font-size:13px;"><span style="color:#666;">${s.label}</span><span style="color:#1A1A1A;font-weight:500;">${s.value}</span></div>`,
         )
         .join("");
 
@@ -194,68 +184,43 @@ export default function Index() {
           if (i % 2 === 0) {
             return twoCol("Локация и виды", body, url);
           }
-          return `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#FFFCF7;">
+          return `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
             <div style="flex:1;background:#000;"><img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
-            <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:${TEXT};">
-              <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:0.5px;color:${DARK};">Интерьер</h2>
-              <div style="width:48px;height:3px;background:${ACCENT};margin:0 0 24px;"></div>
-              <p style="margin:0;font-size:13px;line-height:1.7;color:#2A2A2A;">${caption}</p>
+            <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;justify-content:flex-start;color:#1A1A1A;">
+              <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 24px;">Интерьер</h2>
+              <p style="margin:0;font-size:13px;line-height:1.7;color:#444;">${caption}</p>
             </div>
           </section>`;
         })
         .join("");
 
-      const contact = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:${DARK};color:#fff;">
-        <div style="flex:1;padding:60px 40px;display:flex;flex-direction:column;justify-content:center;">
-          <p style="margin:0 0 14px;letter-spacing:4px;font-size:11px;font-weight:600;color:${ACCENT};text-transform:uppercase;">Контакты</p>
-          <h2 style="font-family:'Montserrat',sans-serif;font-size:42px;font-weight:700;margin:0 0 8px;letter-spacing:1px;">Янина</h2>
-          <div style="width:48px;height:3px;background:${ACCENT};margin:0 0 16px;"></div>
-          <p style="margin:0 0 40px;font-size:13px;color:#B8B8B8;font-weight:400;">Эксперт по элитной недвижимости</p>
-          <div style="font-size:14px;line-height:2.2;color:#E8E8E8;font-weight:400;">
-            <p style="margin:0;">Телефон: <span style="color:#fff;font-weight:600;">+7 (967) 119-88-13</span></p>
-            <p style="margin:0;">Почта: <span style="color:#fff;font-weight:600;">yanina.pro.invest@bk.ru</span></p>
-            <p style="margin:0;">Telegram: <span style="color:${ACCENT};font-weight:600;">@Nelyubovna</span></p>
+      const contact = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#fff;">
+        <div style="flex:1;padding:50px 40px;color:#1A1A1A;">
+          <h2 style="font-family:'Golos Text',sans-serif;font-size:22px;font-weight:500;margin:0 0 32px;">Контакты</h2>
+          <p style="margin:0 0 8px;font-size:18px;font-weight:500;">Янина</p>
+          <p style="margin:0 0 32px;font-size:13px;color:#666;">Эксперт по элитной недвижимости</p>
+          <div style="font-size:14px;line-height:2;color:#222;">
+            <p style="margin:0;">Телефон: +7 (967) 119-88-13</p>
+            <p style="margin:0;">Почта: yanina.pro.invest@bk.ru</p>
+            <p style="margin:0;">Telegram: @Nelyubovna</p>
           </div>
         </div>
         <div style="flex:1;background:#000;"><img src="${photosB64[0]}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
       </section>`;
 
-      // Planning slide with floor plan image
-      const planBody = `
-        <p style="margin:0 0 10px;">— Кухня-гостиная 60 м²</p>
-        <p style="margin:0 0 10px;">— Мастер-спальня с гардеробной</p>
-        <p style="margin:0 0 10px;">— Спальня 2 с санузлом</p>
-        <p style="margin:0 0 10px;">— Спальня 3 / кабинет</p>
-        <p style="margin:0 0 10px;">— Прихожая с гардеробной</p>
-        <p style="margin:0 0 10px;">— Гостевой санузел</p>
-        <p style="margin:0 0 18px;">— Балкон с панорамным остеклением</p>
-        <p style="margin:0;font-size:11px;color:#999;font-style:italic;">* Изображение носит ознакомительный характер</p>
-      `;
-      const planPage = `<section style="page-break-after:always;width:100%;height:100vh;display:flex;background:#FFFCF7;">
-        <div style="flex:1;padding:50px 40px;display:flex;flex-direction:column;color:${TEXT};">
-          <h2 style="font-family:'Montserrat',sans-serif;font-size:24px;font-weight:700;margin:0 0 8px;letter-spacing:0.5px;color:${DARK};">Планировка (приблизительно)</h2>
-          <div style="width:48px;height:3px;background:${ACCENT};margin:0 0 24px;"></div>
-          <div style="font-size:13px;line-height:1.7;color:#2A2A2A;">${planBody}</div>
-        </div>
-        <div style="flex:1;background:#F5EFE0;display:flex;align-items:center;justify-content:center;padding:24px;">
-          <img src="${planB64}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;" />
-        </div>
-      </section>`;
-
-      // Order: cover -> about -> SPECS -> PLAN -> description -> gallery -> contact
       const photoSlides = galleryPages;
-      const about_combined = about + specsPage + planPage + description;
-      const specsBlock = "";
+      const about_combined = about + description;
+      const specsBlock = specsPage;
 
       const html = `<!DOCTYPE html>
 <html lang="ru"><head>
 <meta charset="UTF-8"/>
 <title>Victory Park Residences</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Golos+Text:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;font-family:'Montserrat',-apple-system,sans-serif;}
+  html,body{margin:0;padding:0;font-family:'Golos Text',-apple-system,sans-serif;}
   @page{size:A4 portrait;margin:0;}
   @media print{
     section{width:100%;height:100vh;page-break-after:always;}
@@ -302,7 +267,6 @@ ${cover}${about_combined}${specsBlock}${photoSlides}${contact}
         {slide.kind === "cover" && <CoverSlide />}
         {slide.kind === "about" && <AboutSlide />}
         {slide.kind === "specs" && <SpecsSlide />}
-        {slide.kind === "plan" && <PlanSlide />}
         {slide.kind === "photo" && (
           <PhotoSlide src={PHOTOS[slide.index]} caption={photoCaptions[slide.index]} />
         )}
@@ -369,29 +333,29 @@ ${cover}${about_combined}${specsBlock}${photoSlides}${contact}
 
 /* ===== SLIDES ===== */
 
-const FONT_HEAD = { fontFamily: "'Montserrat', sans-serif" };
-
 function CoverSlide() {
   return (
-    <div className="relative w-full h-full" style={FONT_HEAD}>
+    <div className="relative w-full h-full">
       <img src={PHOTOS[0]} alt="" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/85" />
-      <div className="relative h-full flex flex-col items-center justify-center p-12 md:p-20 text-white text-center">
-        <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-4" style={{ color: "#C9A961" }}>
-          Эксклюзив
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/30" />
+      <div className="relative h-full flex flex-col justify-end p-12 md:p-20 text-white">
+        <p className="text-xs tracking-[0.3em] uppercase opacity-70 mb-6">
+          Эксклюзивное предложение
         </p>
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-wider uppercase leading-tight mb-5">
-          Квартира на продажу
+        <h1
+          className="text-5xl md:text-7xl lg:text-8xl font-light leading-[1.05] mb-8 max-w-5xl"
+          style={{ fontFamily: "'Cormorant', serif" }}
+        >
+          4-комнатная<br />квартира
         </h1>
-        <div className="w-16 h-[3px] mb-6" style={{ background: "#C9A961" }} />
-        <p className="text-lg md:text-2xl font-medium tracking-[0.2em] mb-3">
-          VICTORY PARK RESIDENCES
-        </p>
-        <p className="text-xs md:text-sm tracking-[0.3em] uppercase opacity-80 mb-6">
-          Москва · Парк Победы
-        </p>
-        <p className="text-base md:text-lg opacity-90 mt-4">
+        <p
+          className="text-xl md:text-3xl opacity-80 mb-3"
+          style={{ fontFamily: "'Cormorant', serif" }}
+        >
           179,08 м² · 10/14 этаж · Стиль Неодеко
+        </p>
+        <p className="text-xs tracking-[0.3em] uppercase opacity-60">
+          Москва · напротив Парка Победы
         </p>
       </div>
     </div>
@@ -400,15 +364,15 @@ function CoverSlide() {
 
 function AboutSlide() {
   return (
-    <div className="w-full h-full flex flex-col justify-center p-12 md:p-24 overflow-y-auto" style={{ background: "#FFFCF7", ...FONT_HEAD }}>
-      <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-3" style={{ color: "#C9A961" }}>
-        Об объекте
-      </p>
-      <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-3 max-w-4xl" style={{ color: "#0F1419" }}>
+    <div className="w-full h-full bg-stone-50 flex flex-col justify-center p-12 md:p-24 overflow-y-auto">
+      <p className="text-[11px] tracking-[0.3em] uppercase text-stone-400 mb-6">Об объекте</p>
+      <h2
+        className="text-3xl md:text-5xl font-light leading-tight mb-10 max-w-4xl text-stone-900"
+        style={{ fontFamily: "'Cormorant', serif" }}
+      >
         Редкий видовой лот в одном из самых престижных комплексов Москвы
       </h2>
-      <div className="w-16 h-[3px] mb-10" style={{ background: "#C9A961" }} />
-      <div className="grid md:grid-cols-2 gap-12 max-w-6xl text-stone-700 leading-relaxed font-normal">
+      <div className="grid md:grid-cols-2 gap-12 max-w-6xl text-stone-600 leading-relaxed">
         <p className="text-base md:text-lg">
           Уникальная 4-комнатная квартира 180 м² на 10 этаже корпуса 2 Victory Park Residences
           с панорамным видом на Парк Победы и центр Москвы. Лучшее расположение по видовому
@@ -427,63 +391,28 @@ function AboutSlide() {
 
 function SpecsSlide() {
   return (
-    <div className="w-full h-full flex" style={FONT_HEAD}>
-      <div className="flex-1 flex flex-col justify-center p-12 md:p-20" style={{ background: "#FFFCF7" }}>
-        <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-3" style={{ color: "#C9A961" }}>
-          Основные характеристики
-        </p>
-        <h2 className="text-2xl md:text-4xl font-bold mb-3" style={{ color: "#0F1419" }}>
-          Параметры объекта
-        </h2>
-        <div className="w-16 h-[3px] mb-8" style={{ background: "#C9A961" }} />
-        <div className="space-y-3 max-w-md">
-          {specs.map((s) => (
-            <div key={s.label} className="flex justify-between items-center pb-3 border-b" style={{ borderColor: "#EFE6D2" }}>
-              <span className="text-[11px] uppercase tracking-[0.15em] font-medium text-stone-500">
-                {s.label}
-              </span>
-              <span className="text-sm md:text-base font-semibold" style={{ color: "#0F1419" }}>
-                {s.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="flex-1 bg-black">
-        <img src={PHOTOS[6]} alt="" className="w-full h-full object-cover" />
-      </div>
-    </div>
-  );
-}
-
-const PLAN_IMAGE = "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/files/2126649d-223c-47c6-a6a5-cf01c7e7710b.jpg";
-
-function PlanSlide() {
-  return (
-    <div className="w-full h-full flex" style={FONT_HEAD}>
-      <div className="flex-1 flex flex-col justify-center p-12 md:p-20" style={{ background: "#FFFCF7" }}>
-        <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-3" style={{ color: "#C9A961" }}>
-          Планировка (приблизительно)
-        </p>
-        <h2 className="text-2xl md:text-4xl font-bold mb-3" style={{ color: "#0F1419" }}>
-          Схема квартиры
-        </h2>
-        <div className="w-16 h-[3px] mb-8" style={{ background: "#C9A961" }} />
-        <div className="space-y-2 text-sm md:text-base text-stone-700 leading-relaxed max-w-md">
-          <p>• Кухня-гостиная — 60 м²</p>
-          <p>• Мастер-спальня с гардеробной и санузлом</p>
-          <p>• Спальня 2 с собственным санузлом</p>
-          <p>• Спальня 3 / кабинет</p>
-          <p>• Прихожая с гардеробной</p>
-          <p>• Гостевой санузел</p>
-          <p>• Балкон с панорамным остеклением</p>
-        </div>
-        <p className="text-xs text-stone-400 mt-6 italic">
-          * Изображение носит ознакомительный характер
-        </p>
-      </div>
-      <div className="flex-1 flex items-center justify-center p-8" style={{ background: "#F5EFE0" }}>
-        <img src={PLAN_IMAGE} alt="Планировка" className="max-w-full max-h-full object-contain" />
+    <div className="w-full h-full bg-stone-100 flex flex-col justify-center p-12 md:p-24">
+      <p className="text-[11px] tracking-[0.3em] uppercase text-stone-400 mb-6">Параметры</p>
+      <h2
+        className="text-3xl md:text-5xl font-light mb-12 text-stone-900"
+        style={{ fontFamily: "'Cormorant', serif" }}
+      >
+        Технические характеристики
+      </h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-stone-300 max-w-6xl">
+        {specs.map((s) => (
+          <div key={s.label} className="bg-stone-100 p-6 md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-stone-400 mb-2">
+              {s.label}
+            </p>
+            <p
+              className="text-2xl md:text-3xl text-stone-900 font-light"
+              style={{ fontFamily: "'Cormorant', serif" }}
+            >
+              {s.value}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -502,15 +431,15 @@ function PhotoSlide({ src, caption }: { src: string; caption: string }) {
 
 function LocationSlide() {
   return (
-    <div className="w-full h-full flex flex-col p-12 md:p-20" style={{ background: "#FFFCF7", ...FONT_HEAD }}>
-      <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-3" style={{ color: "#C9A961" }}>
-        Расположение
-      </p>
-      <h2 className="text-2xl md:text-4xl font-bold mb-3" style={{ color: "#0F1419" }}>
+    <div className="w-full h-full bg-stone-50 flex flex-col p-12 md:p-24">
+      <p className="text-[11px] tracking-[0.3em] uppercase text-stone-400 mb-6">Расположение</p>
+      <h2
+        className="text-3xl md:text-5xl font-light mb-12 text-stone-900"
+        style={{ fontFamily: "'Cormorant', serif" }}
+      >
         Адрес и инфраструктура
       </h2>
-      <div className="w-16 h-[3px] mb-8" style={{ background: "#C9A961" }} />
-      <div className="grid md:grid-cols-3 gap-6 flex-1 max-w-6xl">
+      <div className="grid md:grid-cols-3 gap-8 flex-1 max-w-6xl">
         <div className="md:col-span-2 bg-white overflow-hidden">
           <iframe
             src="https://yandex.ru/map-widget/v1/?ll=37.508%2C55.733&z=15&pt=37.508,55.733,pm2rdm"
@@ -527,11 +456,11 @@ function LocationSlide() {
             { label: "Парк Победы", value: "Через дорогу" },
             { label: "Рублёвка", value: "Быстрый выезд" },
           ].map((it) => (
-            <div key={it.label} className="bg-white p-5 border-l-4" style={{ borderColor: "#C9A961" }}>
-              <p className="text-[10px] uppercase tracking-widest font-semibold mb-1" style={{ color: "#C9A961" }}>
+            <div key={it.label} className="bg-white p-5 border border-stone-200">
+              <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-1">
                 {it.label}
               </p>
-              <p className="text-base font-semibold" style={{ color: "#0F1419" }}>{it.value}</p>
+              <p className="text-base text-stone-800">{it.value}</p>
             </div>
           ))}
         </div>
@@ -542,33 +471,28 @@ function LocationSlide() {
 
 function ContactSlide() {
   return (
-    <div className="w-full h-full flex" style={FONT_HEAD}>
-      <div className="flex-1 flex flex-col justify-center p-12 md:p-20 text-white" style={{ background: "#0F1419" }}>
-        <p className="text-[11px] tracking-[0.4em] uppercase font-semibold mb-4" style={{ color: "#C9A961" }}>
-          Контакты
-        </p>
-        <h2 className="text-4xl md:text-6xl font-bold mb-3 tracking-wide">
-          Янина
-        </h2>
-        <div className="w-16 h-[3px] mb-5" style={{ background: "#C9A961" }} />
-        <p className="text-stone-300 mb-12 font-normal">Эксперт по элитной недвижимости</p>
-        <div className="space-y-5 text-base md:text-lg">
-          <div className="flex items-center gap-4">
-            <Icon name="Phone" size={18} style={{ color: "#C9A961" }} />
-            <span className="font-semibold">+7 (967) 119-88-13</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Icon name="Mail" size={18} style={{ color: "#C9A961" }} />
-            <span className="font-semibold">yanina.pro.invest@bk.ru</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Icon name="MessageCircle" size={18} style={{ color: "#C9A961" }} />
-            <span className="font-semibold" style={{ color: "#C9A961" }}>@Nelyubovna</span>
-          </div>
+    <div className="w-full h-full bg-stone-900 flex flex-col justify-center p-12 md:p-24 text-white">
+      <p className="text-[11px] tracking-[0.3em] uppercase text-stone-400 mb-6">Контакты</p>
+      <h2
+        className="text-5xl md:text-7xl font-light mb-3"
+        style={{ fontFamily: "'Cormorant', serif" }}
+      >
+        Янина
+      </h2>
+      <p className="text-stone-400 mb-16">Эксперт по элитной недвижимости</p>
+      <div className="space-y-5 text-lg md:text-xl">
+        <div className="flex items-center gap-4">
+          <Icon name="Phone" size={18} className="text-stone-500" />
+          <span>+7 (967) 119-88-13</span>
         </div>
-      </div>
-      <div className="flex-1 bg-black">
-        <img src={PHOTOS[0]} alt="" className="w-full h-full object-cover" />
+        <div className="flex items-center gap-4">
+          <Icon name="Mail" size={18} className="text-stone-500" />
+          <span>yanina.pro.invest@bk.ru</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <Icon name="MessageCircle" size={18} className="text-stone-500" />
+          <span>@Nelyubovna</span>
+        </div>
       </div>
     </div>
   );
