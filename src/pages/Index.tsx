@@ -1,5 +1,6 @@
 import Icon from "@/components/ui/icon";
 import { useState } from "react";
+import pptxgen from "pptxgenjs";
 
 const PHOTOS = [
   "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/27f78297-7bf6-4d99-ab16-22b37a00dce8.png",
@@ -60,33 +61,125 @@ const rooms: { name: string; size: string; x: number; y: number; w: number; h: n
 export default function Index() {
   const [active, setActive] = useState(0);
 
-  const handleDownloadPdf = () => {
-    window.print();
+  const [generating, setGenerating] = useState(false);
+
+  const handleDownloadPptx = async () => {
+    setGenerating(true);
+    try {
+      const pptx = new pptxgen();
+      pptx.layout = "LAYOUT_WIDE";
+      pptx.title = "Victory Park Residences — 4-комнатная квартира";
+
+      const ALL_PHOTOS = [
+        ...PHOTOS,
+        "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/4547b25b-e005-40bc-9b2d-9ac26ed3286a.png",
+        "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/fb81af11-edae-428c-af78-e006195d9cd7.png",
+        "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/1ae1bb6e-ce89-4634-b606-0253ce943144.png",
+        "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/d79c305f-331f-472f-a39a-4ba1950b60a9.png",
+        "https://cdn.poehali.dev/projects/603ba905-8b0a-4a95-9eb7-081add793bbb/bucket/e618b959-05fc-4b46-a5c8-fdd4796ff45a.png",
+      ];
+
+      // Slide 1 — Title
+      const s1 = pptx.addSlide();
+      s1.background = { color: "1A1A1A" };
+      s1.addImage({ path: HERO, x: 0, y: 0, w: 13.33, h: 7.5, sizing: { type: "cover", w: 13.33, h: 7.5 } });
+      s1.addShape("rect", { x: 0, y: 0, w: 13.33, h: 7.5, fill: { color: "000000", transparency: 50 }, line: { color: "000000", width: 0 } });
+      s1.addText("VICTORY PARK RESIDENCES", { x: 0.6, y: 0.5, w: 12, h: 0.4, fontSize: 12, color: "FFFFFF", fontFace: "Calibri", charSpacing: 6 });
+      s1.addText("4-комнатная квартира", { x: 0.6, y: 4.5, w: 12, h: 1.2, fontSize: 54, color: "FFFFFF", fontFace: "Cambria" });
+      s1.addText("179,08 м²  ·  10/14 этаж  ·  Стиль Неодеко", { x: 0.6, y: 5.7, w: 12, h: 0.6, fontSize: 22, color: "DDDDDD", fontFace: "Cambria" });
+      s1.addText("Москва · напротив Парка Победы", { x: 0.6, y: 6.5, w: 12, h: 0.4, fontSize: 14, color: "AAAAAA", fontFace: "Calibri", charSpacing: 4 });
+
+      // Slide 2 — About
+      const s2 = pptx.addSlide();
+      s2.background = { color: "FAFAF8" };
+      s2.addText("Об объекте", { x: 0.6, y: 0.4, w: 12, h: 0.4, fontSize: 11, color: "8B8B7A", fontFace: "Calibri", charSpacing: 6 });
+      s2.addText("Редкий видовой лот в одном из самых престижных комплексов Москвы", { x: 0.6, y: 0.9, w: 12, h: 1.2, fontSize: 32, color: "1A1A1A", fontFace: "Cambria" });
+      s2.addText(
+        "Уникальная 4-комнатная квартира 180 м² на 10 этаже корпуса 2 Victory Park Residences с панорамным видом на Парк Победы и центр Москвы. Лучшее расположение по видовому потенциалу — Музей и Монумент Победы, Храм Георгия Победоносца, Триумфальные ворота, Москва-Сити.\n\nДом сдан, акт приёма-передачи подписан, в квартире никто не проживал. Премиальная дизайнерская отделка от застройщика в стиле Неодеко: натуральные материалы, современные инженерные решения, панорамные окна.\n\nПланировка: просторная кухня-гостиная 60 м², три мастер-спальни с собственными санузлами и гардеробными.",
+        { x: 0.6, y: 2.4, w: 12, h: 4.5, fontSize: 16, color: "555555", fontFace: "Calibri", lineSpacingMultiple: 1.4 }
+      );
+
+      // Slide 3 — Specs
+      const s3 = pptx.addSlide();
+      s3.background = { color: "F2F1EC" };
+      s3.addText("Параметры", { x: 0.6, y: 0.4, w: 12, h: 0.4, fontSize: 11, color: "8B8B7A", fontFace: "Calibri", charSpacing: 6 });
+      s3.addText("Технические характеристики", { x: 0.6, y: 0.9, w: 12, h: 0.8, fontSize: 32, color: "1A1A1A", fontFace: "Cambria" });
+      const cols = 4;
+      const cellW = 3.0;
+      const cellH = 1.4;
+      const startX = 0.6;
+      const startY = 2.4;
+      specs.forEach((s, i) => {
+        const cx = startX + (i % cols) * cellW;
+        const cy = startY + Math.floor(i / cols) * cellH;
+        s3.addShape("rect", { x: cx, y: cy, w: cellW - 0.1, h: cellH - 0.1, fill: { color: "FFFFFF" }, line: { color: "E0E0D8", width: 0.5 } });
+        s3.addText(s.label.toUpperCase(), { x: cx + 0.2, y: cy + 0.15, w: cellW - 0.4, h: 0.3, fontSize: 9, color: "999999", fontFace: "Calibri", charSpacing: 4 });
+        s3.addText(s.value, { x: cx + 0.2, y: cy + 0.5, w: cellW - 0.4, h: 0.7, fontSize: 22, color: "1A1A1A", fontFace: "Cambria" });
+      });
+
+      // Slide 4 — Advantages
+      const s4 = pptx.addSlide();
+      s4.background = { color: "FAFAF8" };
+      s4.addText("Преимущества", { x: 0.6, y: 0.4, w: 12, h: 0.4, fontSize: 11, color: "8B8B7A", fontFace: "Calibri", charSpacing: 6 });
+      s4.addText("Что делает объект особенным", { x: 0.6, y: 0.9, w: 12, h: 0.8, fontSize: 32, color: "1A1A1A", fontFace: "Cambria" });
+      advantages.forEach((a, i) => {
+        const cx = 0.6 + (i % 2) * 6.2;
+        const cy = 2.3 + Math.floor(i / 2) * 2.2;
+        s4.addShape("rect", { x: cx, y: cy, w: 6.0, h: 2.0, fill: { color: "FFFFFF" }, line: { color: "E5E5DD", width: 0.5 } });
+        s4.addText(a.title, { x: cx + 0.3, y: cy + 0.3, w: 5.4, h: 0.5, fontSize: 18, bold: true, color: "1A1A1A", fontFace: "Cambria" });
+        s4.addText(a.desc, { x: cx + 0.3, y: cy + 0.85, w: 5.4, h: 1.0, fontSize: 13, color: "777777", fontFace: "Calibri" });
+      });
+
+      // Photo slides
+      const photoTitles = [
+        "Фасад комплекса",
+        "Триумфальные ворота",
+        "Храм Георгия Победоносца",
+        "Образец интерьера",
+        "Памятник героям Первой мировой войны",
+        "Вид из квартиры",
+        "Кухня-гостиная 60 м²",
+        "Мастер-спальня",
+        "Ванная комната",
+      ];
+      ALL_PHOTOS.forEach((url, i) => {
+        const sp = pptx.addSlide();
+        sp.background = { color: "1A1A1A" };
+        sp.addImage({ path: url, x: 0, y: 0, w: 13.33, h: 7.5, sizing: { type: "contain", w: 13.33, h: 7.5 } });
+        sp.addText(photoTitles[i] || `Фото ${i + 1}`, {
+          x: 0.6, y: 6.8, w: 12, h: 0.5, fontSize: 14, color: "FFFFFF", fontFace: "Calibri", charSpacing: 4,
+        });
+      });
+
+      // Contact slide
+      const sc = pptx.addSlide();
+      sc.background = { color: "1A1A1A" };
+      sc.addText("Контакты", { x: 0.6, y: 0.5, w: 12, h: 0.4, fontSize: 11, color: "8B8B7A", fontFace: "Calibri", charSpacing: 6 });
+      sc.addText("Янина", { x: 0.6, y: 1.2, w: 12, h: 1.0, fontSize: 48, color: "FFFFFF", fontFace: "Cambria" });
+      sc.addText("Эксперт по элитной недвижимости", { x: 0.6, y: 2.4, w: 12, h: 0.5, fontSize: 16, color: "AAAAAA", fontFace: "Calibri" });
+      sc.addText("Телефон    +7 (967) 119-88-13", { x: 0.6, y: 3.8, w: 12, h: 0.5, fontSize: 18, color: "FFFFFF", fontFace: "Calibri" });
+      sc.addText("Почта         yanina.pro.invest@bk.ru", { x: 0.6, y: 4.4, w: 12, h: 0.5, fontSize: 18, color: "FFFFFF", fontFace: "Calibri" });
+      sc.addText("Telegram   @Nelyubovna", { x: 0.6, y: 5.0, w: 12, h: 0.5, fontSize: 18, color: "FFFFFF", fontFace: "Calibri" });
+      sc.addText("Victory Park Residences · Корпус 2 · Москва", { x: 0.6, y: 6.8, w: 12, h: 0.4, fontSize: 11, color: "777777", fontFace: "Calibri", charSpacing: 4 });
+
+      await pptx.writeFile({ fileName: "Victory-Park-Residences.pptx" });
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900">
-      {/* PRINT STYLES */}
-      <style>{`
-        @media print {
-          @page { size: A4; margin: 12mm; }
-          html, body { background: #fff !important; }
-          .no-print { display: none !important; }
-          section { page-break-inside: avoid; padding-top: 16px !important; padding-bottom: 16px !important; }
-          .print-hero { height: 480px !important; min-height: 480px !important; }
-          iframe { display: none !important; }
-          h1, h2 { color: #111 !important; }
-          img { max-width: 100% !important; }
-        }
-      `}</style>
-
       {/* FLOATING DOWNLOAD BUTTON */}
       <button
-        onClick={handleDownloadPdf}
-        className="no-print fixed bottom-6 right-6 z-50 bg-stone-900 text-white px-6 py-4 shadow-2xl hover:bg-stone-800 transition-colors flex items-center gap-3 group"
+        onClick={handleDownloadPptx}
+        disabled={generating}
+        className="fixed bottom-6 right-6 z-50 bg-stone-900 text-white px-6 py-4 shadow-2xl hover:bg-stone-800 transition-colors flex items-center gap-3 disabled:opacity-50"
       >
-        <Icon name="Download" size={18} />
-        <span className="text-xs tracking-widest uppercase">Скачать PDF</span>
+        <Icon name={generating ? "Loader" : "Presentation"} size={18} className={generating ? "animate-spin" : ""} />
+        <span className="text-xs tracking-widest uppercase">
+          {generating ? "Создаю..." : "Скачать PowerPoint"}
+        </span>
       </button>
 
       {/* HERO */}
@@ -431,13 +524,10 @@ export default function Index() {
                 и о машино-местах.
               </p>
             </div>
-            <div className="mt-8 space-y-3">
-              <button className="w-full bg-white text-stone-900 py-3.5 text-xs tracking-widest uppercase hover:bg-stone-100 transition-colors">
-                Позвонить
-              </button>
-              <button className="w-full border border-white/30 text-white py-3.5 text-xs tracking-widest uppercase hover:border-white/60 transition-colors">
-                Написать
-              </button>
+            <div className="mt-8 pt-6 border-t border-white/10 space-y-3">
+              <p className="text-white text-sm">+7 (967) 119-88-13</p>
+              <p className="text-white text-sm">yanina.pro.invest@bk.ru</p>
+              <p className="text-white text-sm">@Nelyubovna</p>
             </div>
           </div>
         </div>
