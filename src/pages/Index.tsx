@@ -72,6 +72,31 @@ export default function Index() {
   const handleDownloadPdf = async () => {
     setGenerating(true);
     try {
+      // Pre-load all photos as base64 so they appear in PDF
+      const toBase64 = (url: string): Promise<string> =>
+        new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            const c = document.createElement("canvas");
+            c.width = img.naturalWidth;
+            c.height = img.naturalHeight;
+            const ctx = c.getContext("2d");
+            if (!ctx) return resolve(url);
+            ctx.drawImage(img, 0, 0);
+            try {
+              resolve(c.toDataURL("image/jpeg", 0.9));
+            } catch {
+              resolve(url);
+            }
+          };
+          img.onerror = () => resolve(url);
+          img.src = url;
+        });
+
+      const photosB64 = await Promise.all(PHOTOS.map(toBase64));
+      const heroB64 = photosB64[0];
+
       const win = window.open("", "_blank");
       if (!win) {
         alert("Разрешите всплывающие окна для скачивания PDF");
@@ -82,7 +107,7 @@ export default function Index() {
         `<section style="page-break-after:always;width:100%;height:100vh;background:${bg};display:flex;flex-direction:column;justify-content:center;padding:60px;box-sizing:border-box;">${inner}</section>`;
 
       const cover = slideHtml(
-        `<div style="position:absolute;inset:0;background:url('${PHOTOS[0]}') center/cover;"></div>
+        `<div style="position:absolute;inset:0;background:url('${heroB64}') center/cover;"></div>
          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.3),rgba(0,0,0,0.85));"></div>
          <div style="position:relative;color:#fff;">
            <p style="letter-spacing:6px;font-size:14px;opacity:0.7;margin-bottom:300px;">VICTORY PARK RESIDENCES · КОРПУС 2</p>
@@ -117,12 +142,14 @@ export default function Index() {
         "#F2F1EC",
       );
 
-      const photoSlides = PHOTOS.map(
-        (url, i) => `<section style="page-break-after:always;width:100%;height:100vh;background:#1A1A1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;box-sizing:border-box;">
-          <img src="${url}" style="max-width:100%;max-height:88%;object-fit:contain;" crossorigin="anonymous" />
+      const photoSlides = photosB64
+        .map(
+          (url, i) => `<section style="page-break-after:always;width:100%;height:100vh;background:#1A1A1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;box-sizing:border-box;">
+          <img src="${url}" style="max-width:100%;max-height:88%;object-fit:contain;" />
           <p style="color:#fff;font-size:14px;letter-spacing:3px;margin-top:20px;text-align:center;">${photoCaptions[i] || ""}</p>
         </section>`,
-      ).join("");
+        )
+        .join("");
 
       const contact = slideHtml(
         `<p style="letter-spacing:5px;font-size:11px;color:#8B8B7A;margin:0 0 24px;">КОНТАКТЫ</p>
@@ -154,9 +181,22 @@ export default function Index() {
 </head><body>
 ${cover}${about}${specsBlock}${photoSlides}${contact}
 <script>
-  window.onload = function(){
-    setTimeout(function(){ window.print(); }, 800);
-  };
+  function startPrint(){
+    var imgs = document.images;
+    var loaded = 0;
+    if(imgs.length === 0){ setTimeout(function(){ window.print(); }, 500); return; }
+    for(var i=0;i<imgs.length;i++){
+      if(imgs[i].complete){ loaded++; }
+      else {
+        imgs[i].onload = imgs[i].onerror = function(){
+          loaded++;
+          if(loaded === imgs.length){ setTimeout(function(){ window.print(); }, 600); }
+        };
+      }
+    }
+    if(loaded === imgs.length){ setTimeout(function(){ window.print(); }, 600); }
+  }
+  window.onload = startPrint;
 </script>
 </body></html>`;
 
